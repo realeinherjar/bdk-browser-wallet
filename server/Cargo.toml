@@ -20,3 +20,6 @@ anyhow.workspace = true
 serde.workspace = true
 bdk.workspace = true
 bdk_esplora.workspace = true
+
+[dev-dependencies]
+bdk_chain = "0.5"
