@@ -1,5 +1,5 @@
 use app::*;
-use axum::{routing::get, Router};
+use axum::{routing::{get, post}, Router};
 use fileserv::file_and_error_handler;
 use leptos::*;
 use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns};
@@ -24,6 +24,7 @@ async fn main() {
 
     // build our application with a route
     let app = Router::new()
+        .route("/api/*fn_name", post(handle_server_fns))
         .route("/api/*fn_name", get(handle_server_fns))
         .leptos_routes(&leptos_options, routes, || view! {  <App/> })
         .fallback(file_and_error_handler)
