@@ -4,12 +4,40 @@ use bdk::{
     bitcoin::{Network,util::bip32::DerivationPath, secp256k1::Secp256k1},
     keys::bip39::{Mnemonic, Language},
     descriptor,
-    descriptor::IntoWalletDescriptor, LocalUtxo,
+    descriptor::IntoWalletDescriptor, LocalUtxo, wallet::{AddressIndex, AddressInfo},
 };
 use bdk_esplora::{esplora_client::{AsyncClient, Builder}, EsploraAsyncExt};
 use leptos::{server, ServerFnError};
-use std::str::FromStr;
+use std::{str::FromStr, u32};
+use serde::{Serialize, Deserialize};
 use serde_json::to_string;
+
+// NOTE: hardcoded to BIP86
+const DEFAULT_DERIVATION_PATH_EXTERNAL: &str = "m/86'/0'/0'/0";
+const DEFAULT_DERIVATION_PATH_INTERNAL: &str = "m/86'/0'/0'/1";
+
+#[derive(Debug)]
+enum AddressType {
+    Receive,
+    Change
+}
+
+/// Hack to get around the fact that BDK's AddressInfo doesn't implement Serialize.
+#[derive(Debug, Serialize, Deserialize)]
+struct AddressInfoDef {
+    index: usize,
+    address: String,
+    keychain: String,
+}
+impl AddressInfoDef {
+    fn from(address_info: AddressInfo) -> Self {
+        Self {
+            index: address_info.index as usize,
+            address: address_info.address.to_string(),
+            keychain: format!("{:?}", address_info.keychain),
+        }
+    }
+}
 
 /// Creates a wallet from a mnemonic, a network type, and an internal and external derivation paths.
 pub fn create_wallet(
@@ -81,10 +109,10 @@ pub async fn get_utxo(mnemonic: String, network: String) -> Result<String, Serve
     let esplora_client = Builder::new(base_url).build_async()?;
 
     // Create the wallet
-    // NOTE: hardcoded to BIP86
     let mut wallet = create_wallet(mnemonic.as_str(), network.as_str(),
-            "m/86'/0'/0'/0",
-            "m/86'/0'/0'/1").unwrap();
+            DEFAULT_DERIVATION_PATH_EXTERNAL,
+            DEFAULT_DERIVATION_PATH_INTERNAL,
+            ).unwrap();
 
     // Sync Wallet
     let _ = sync_wallet(&mut wallet, &esplora_client).await;
@@ -105,10 +133,10 @@ pub async fn get_balance(mnemonic: String, network: String) -> Result<String, Se
     let esplora_client = Builder::new(base_url).build_async()?;
 
     // Create the wallet
-    // NOTE: hardcoded to BIP86
     let mut wallet = create_wallet(mnemonic.as_str(), network.as_str(),
-            "m/86'/1'/0'/0",
-            "m/86'/1'/0'/1").unwrap();
+            DEFAULT_DERIVATION_PATH_EXTERNAL,
+            DEFAULT_DERIVATION_PATH_INTERNAL,
+            ).unwrap();
 
     // Sync Wallet
     let _ = sync_wallet(&mut wallet, &esplora_client).await;
@@ -123,9 +151,33 @@ pub async fn get_balance(mnemonic: String, network: String) -> Result<String, Se
 
 /// Returns a JSON string of the wallet's address for a given address type and index.
 /// Address type can be "receive" or "change".
-#[server(GetAdress, "/api", "GetJson", "address")] // GetJson is a GET and will be cached
-pub async fn get_address(mnemonic: String, network: String, address_type: &str, index: usize) -> Result<String, ServerFnError> {
-    todo!()
+#[server(GetAddress, "/api", "GetJson", "address")] // GetJson is a GET and will be cached
+pub async fn get_address(mnemonic: String, network: String, address_type: String, index: usize) -> Result<String, ServerFnError> {
+    // Address wrangling
+    let address_type = address_type.as_str();
+    let address_type: AddressType = match address_type {
+        "receive" => AddressType::Receive,
+        "change" => AddressType::Change,
+        &_ => AddressType::Receive, // NOTE: a good default
+    };
+    let address_index: AddressIndex = AddressIndex::Peek(index as u32);
+
+    // Create the wallet
+    let mut wallet = create_wallet(mnemonic.as_str(), network.as_str(),
+            DEFAULT_DERIVATION_PATH_EXTERNAL,
+            DEFAULT_DERIVATION_PATH_INTERNAL,
+            ).unwrap();
+
+    // Get the address
+    let address = match address_type {
+        AddressType::Receive => wallet.get_address(address_index),
+        AddressType::Change => wallet.get_internal_address(address_index),
+    };
+    let address = AddressInfoDef::from(address);
+
+    // Serialize to JSON
+    let json = to_string(&address)?;
+    Ok(json)
 }
 
 #[cfg(test)]
