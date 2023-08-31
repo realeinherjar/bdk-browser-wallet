@@ -16,5 +16,11 @@ tokio.workspace = true
 tower.workspace = true
 tower-http.workspace = true
 log.workspace = true
+anyhow.workspace = true
 serde.workspace = true
 bdk.workspace = true
+bdk_esplora.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+bdk_chain = "0.5"
