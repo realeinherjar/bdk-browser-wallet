@@ -9,10 +9,10 @@ lto = true
 opt-level = 'z'
 
 [workspace.dependencies]
-leptos = { version = "0.5.0-beta", features = ["nightly"] }
-leptos_meta = { version = "0.5.0-beta", features = ["nightly"] }
-leptos_router = { version = "0.5.0-beta", features = ["nightly"] }
-leptos_axum = { version = "0.5.0-beta" }
+leptos = { version = "0.5.0-rc-2", features = ["nightly"] }
+leptos_meta = { version = "0.5.0-rc-2", features = ["nightly"] }
+leptos_router = { version = "0.5.0-rc-2", features = ["nightly"] }
+leptos_axum = { version = "0.5.0-rc-2" }
 
 axum = "0.6"
 cfg-if = "1"
@@ -41,10 +41,10 @@ serde_json = "1"
 # this name is used for the wasm, js and css file names
 name = "bdk-browser-wallet"
 
-# the package in the workspace that contains the server binary (binary crate)
+# the package in the workspace that contains the server binary (binary create)
 bin-package = "server"
 
-# the package in the workspace that contains the frontend wasm binary (library crate)
+# the package in the workspace that contains the frontend wasm binary (library create)
 lib-package = "frontend"
 
 # The site root folder is where cargo-leptos generate all output.

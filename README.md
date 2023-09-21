@@ -9,12 +9,10 @@
 | Do not use this wallet! It is for portfolio/learning purposes |
 
 This is a [Leptos](https://github.com/leptos-rs/leptos) web framework project.
-It is a Bitcoin wallet that uses [`mempool.space`](https://mempool.space/)
-[Esplora](https://github.com/Blockstream/esplora/blob/master/API.md) API.
-
-[Axum](https://github.com/tokio-rs/axum).
-
-See it in action at [`vercel.app`](https://react-wallet-with-lasers.vercel.app/).
+It is a Bitcoin wallet that uses [`mempool.space`](https://mempool.space/),
+[Esplora](https://github.com/Blockstream/esplora/blob/master/API.md) API,
+[Axum](https://github.com/tokio-rs/axum) backend,
+and [BDK](https://github.com/bitcoindevkit/bdk).
 
 ## Screenshots
 
@@ -34,7 +32,8 @@ Libraries used:
 - [Leptos](https://github.com/leptos-rs/leptos) and
   [Axum](https://github.com/tokio-rs/axum)
   for the frontend/backend and async functionality.
-- [Tailwind CSS](https://tailwindcss.com/) and [Preline](https://www.preline.co/) for styling.
+- [Tailwind CSS](https://tailwindcss.com/) and
+  [Preline](https://www.preline.co/) for styling.
 - [BDK](https://github.com/bitcoindevkit/bdk) for Bitcoin
   functionality.
 
@@ -50,14 +49,13 @@ Purpose:
 - Learn how to build apps with Leptos.
 - Learn how to fetch data asynchronously with Axum
   and do server-side rendering with async components.
-- Use my knowledge of Docker to deploy the app to Vercel.
 
 ## How it works
 
 The wallet is a single page application that has server-side rendering
 on the transactions async API fetch from Esplora using the
 [`bdk-esplora`](https://github.com/bitcoindevkit/bdk/tree/master/crates/esplora)
-crate.
+create.
 This is done by BDK.
 
 Once the wallet is created, the app will fetch the wallet's balance
@@ -147,7 +145,3 @@ LEPTOS_RELOAD_PORT="3001"
 ```
 
 Finally, run the server binary.
-
-## Docker
-
-TODO: Add Dockerfile and docker-compose.yml
