@@ -9,12 +9,10 @@
 | Do not use this wallet! It is for portfolio/learning purposes |
 
 This is a [Leptos](https://github.com/leptos-rs/leptos) web framework project.
-It is a Bitcoin wallet that uses [`mempool.space`](https://mempool.space/)
-[Esplora](https://github.com/Blockstream/esplora/blob/master/API.md) API.
-
-[Axum](https://github.com/tokio-rs/axum).
-
-See it in action at [`vercel.app`](https://react-wallet-with-lasers.vercel.app/).
+It is a Bitcoin wallet that uses [`mempool.space`](https://mempool.space/),
+[Esplora](https://github.com/Blockstream/esplora/blob/master/API.md) API,
+[Axum](https://github.com/tokio-rs/axum) backend,
+and [BDK](https://github.com/bitcoindevkit/bdk).
 
 ## Screenshots
 
